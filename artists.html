@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="images.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1 id="h1">Artists Images</h1>
+    </div>
+    <div class="searchBar"><input type="text" placeholder="Insert your desired input"></div>
+    <script>
+        let h = document.getElementById('h1')
+        let container = document.querySelector('.container')
+        let cards = document.querySelectorAll('.card')
+        container.style.cssText = `display: flex; justify-content: center; background:rgb(153, 149, 149);
+        letter-spacing: 2px; `
+        let searchBar = document.querySelector(".searchBar")
+        searchBar.style.cssText = `display: flex; justify-content: center; margin-top:10px;`
+        let input = document.querySelector('.searchBar input')
+        input.style.cssText = `width: 300px; height: 30px; border:none;  border-radius: 5px; padding: 8px; 
+        box-shadow: 0px 0px 10px rgb(110, 108, 108); outline: none; font-size: 18px; transition: box-shadow 0.3s ease;`
+        h.style.cssText = `margin: 20px; color: #fff`
+        let div = document.createElement('div')
+        div.style.cssText = `display: flex; flex-wrap: wrap;`
+        // div.style.cssText = input.value == "" ? `display:block` :  `display:none`
+        // let arraySuggestion = []
+        input.addEventListener('keyup', () => {
+            
+            const existingSuggestions = document.querySelector('.suggestions')
+            if (existingSuggestions){
+                existingSuggestions.remove()
+            }
+            let boxSuggestion = document.createElement('div');
+            boxSuggestion.className = "suggestions"; // Set class name
+            if (input.value.length > 0) {
+                // console.log(input.value)
+                let arraySuggestion = []
+                GetContent()
+
+            } else {
+                // if (existingSuggestions) {
+                //     GetImages()
+                // existingSuggestions.style.display = 'none'; // Hide suggestions
+                // }
+                cards.forEach(card => {
+                    card.style.display = 'flex'; // Show all cards
+                })
+            }
+            searchBar.insertAdjacentElement('afterend', boxSuggestion);
+            // existingSuggestions.style.cssText =  inputValue == ""  ?  `display:none` : `display:block`
+            // div.style.cssText = input.value == "" ? `display:flex; flex-wrap:wrap` :  `display:none`
+        })
+        GetImages()
+        let inputValue, id, name, members, locations, firstAlbum, creationDate
+        function GetContent() {
+            let members = []
+            let locations = []
+            let cardId = []
+            inputValue = (input.value).toLowerCase()
+            let cards = document.querySelectorAll('.card')
+            // let matchedContainer = document.createElement('div')
+            // matchedContainer.style.cssText = `display: flex; flex-wrap: wrap;`
+            let boxSuggestion = document.createElement('div')
+             boxSuggestion.innerHTML = ''
+            cards.forEach(card => {
+                id = card.getAttribute("data-id")
+                name = card.getAttribute("data-name").toLowerCase()
+                members = card.getAttribute("data-members").split(', ').map(member => member.trim())
+                locations = card.getAttribute("data-location").split(', ').map(location => location.trim())
+                firstAlbum = card.getAttribute("data-firstAlbum").toLowerCase()
+                creationDate = card.getAttribute("data-creationDate").toLowerCase()
+                
+                if(name.includes(inputValue) || members.includes(inputValue) || locations.includes(inputValue) ||  firstAlbum.includes(inputValue) || creationDate.includes(inputValue)) {
+
+                    let divSuggestion =  document.createElement('div')
+                    let filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
+                    let filterLocations = locations.filter(location => location.includes(inputValue))
+                    let arrayVariable = [name,  filterMembers.join(', '), filterLocations.join(', '), firstAlbum, creationDate]
+                    arraySuggestion = arrayVariable.filter(item => item.includes(inputValue))  
+                    console.log(arraySuggestion)
+                    divSuggestion.innerHTML = arraySuggestion.join(' | ')
+                    boxSuggestion.appendChild(divSuggestion)
+                    cardId.push(Number(id))
+                }
+            })
+
+            cards.forEach(card => {
+                const id = Number(card.getAttribute("data-id"))
+                card.style.cssText = cardId.includes(id) ? `display: flex; flex-wrap:wrap`:  `display: none;`
+            })
+            // 
+            if(boxSuggestion.childNodes.length > 0) {
+                searchBar.insertAdjacentElement('afterend', boxSuggestion)
+            }
+            // if(existingSuggestions) {
+            //     existingSuggestions.remove()
+            // }
+
+        }
+        function GetImages() {
+        let xhr = new XMLHttpRequest()
+        xhr.open('GET', '/artists', true)
+        xhr.onload = function() {
+            if(xhr.readyState == 4 && xhr.status == 200) {
+                // let x = xhr.response
+                // console.log(x)
+                let images = JSON.parse(xhr.response)
+                console.log(images)
+                div.innerHTML = ''
+                images.forEach(item => {
+                    div.innerHTML += `
+                    <div class="card" data-id=${item.id} data-name=${item.name} data-members=${item.members} data-location=${item.Location}
+                    data-firstAlbum=${item.firstAlbum} data-creationDate=${item.creationDate}>
+                        <img id=${item.id} src="${item.image}" alt="${item.name}">
+                    </div>`
+                })
+                // let card = document.querySelectorAll('.card')
+                // cards.forEach(item => {
+                //     // item.style.cssText = `flex-basis: 400px;`
+                //     // item.style.cssText = `width: 400px; margin: 20px; border-Radius: 50%;
+                //     // border: 2px solid rgb(65, 68, 65)`
+                //     item.addEventListener('click', () => {
+
+                //         let id = Number(item.getAttribute('data-id'))
+                //         console.log(id)
+                //         console.log(images[0])
+                //     })
+                // })
+                document.body.appendChild(div)
+                // console.log(card)
+                
+                let imgs = document.querySelectorAll('img')
+                imgs.forEach(img => {
+                    img.style.cssText = `width: 400px; margin: 20px; border-Radius: 50%;
+                    border: 2px solid rgb(65, 68, 65)`
+
+                    img.addEventListener('click', () => {
+                        let id = Number(img.getAttribute('id'))
+                        console.log(id)
+                        console.log(images[id-1])
+                        sessionStorage.setItem('artistData', JSON.stringify(images[id-1])); 
+                        window.location.href = 'artistDetails.html';
+                        // SendDataOfArtist(images[id-1])
+                        // window.location.href = `artistDetails.html`
+                    })
+
+                    // img.addEventListener('mouseenter', () => {
+                    //     img.style.cssText = `width: 400px; margin: 20px; border-Radius: 50%;
+                    // border: 2px solid rgb(65, 68, 65); transform: scale(1.1); filter: brightness(1.2); 
+                    // transition: all 0.5s ease-in-out; box-shadow: 0 0  8px rgb(25, 25, 26);`
+                    // })
+
+                    // img.addEventListener('mouseleave', () => {
+                    //     img.style.cssText = `width: 400px; margin: 20px; border-Radius: 50%;
+                    // border: 2px solid rgb(65, 68, 65); transform: scale(1); filter: brightness(1);
+                    //  transition: transform 0.5s; `
+                    // })
+                })
+            }
+        }
+        xhr.send()
+       }
+
+    //    function SendDataOfArtist(artistData) {
+    //     localStorage.setItem('artistData', JSON.stringify({a:artistData})); 
+    //         // let xhr = new XMLHttpRequest()
+    //         // xhr.open('POST', '/artistDetails.html', true)
+    //         // xhr.setRequestHeader("Content-Type", "application/json")
+    //         // xhr.onload = () => {
+    //         //     if (xhr.status === 200) {
+    //         //         console.log(xhr.response)
+    //                 window.location.href = 'artistDetails.html';
+    //         //     }
+    //         // }
+    //         // xhr.send(JSON.stringify(artistData))
+
+    //    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ }
+ body h1{
+    color: rgb(153, 149, 149);
+    letter-spacing: 2px;
+    margin-top: 80px;
+ }
+ .data{
+    border: none;
+    padding: 10px;
+    margin-top: 100px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px rgb(110, 108, 108);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 800px;
+ }
+ .data h1{
+    color: rgb(160, 161, 161);
+ }
+ .data h2{
+    padding: 10px 20px;
+    background: rgb(163, 159, 159);
+    border: none;
+    border-radius: 5px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+ }
+ .data h2:hover{
+    box-shadow: 0px 0px 5px rgb(129, 129, 129);
+    font-size: 30px;
+    color: rgb(133, 129, 129);
+    background: rgb(240, 235, 235);
+    transition: all 0.5s ease-in-out;
+    border: none;
+ }
