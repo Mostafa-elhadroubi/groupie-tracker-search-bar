@@ -56,7 +56,8 @@
         GetImages()
         let inputValue, id, name, members, locations, firstAlbum, creationDate
         function GetContent() {
-            let members = []
+            let divSuggestion = document.createElement('div')
+            divSuggestion.innerHTML = ''
             let locations = []
             let cardId = []
             inputValue = (input.value).toLowerCase()
@@ -64,29 +65,74 @@
             // let matchedContainer = document.createElement('div')
             // matchedContainer.style.cssText = `display: flex; flex-wrap: wrap;`
             let boxSuggestion = document.createElement('div')
+            let  arraySuggestion = []
+            let filterMembers, filterLocations, arrayVariable = []
              boxSuggestion.innerHTML = ''
+             divSuggestion.innerHTML = ""
             cards.forEach(card => {
+                id, name, members, locations, firstAlbum, creationDate = ""
+                
                 id = card.getAttribute("data-id")
                 name = card.getAttribute("data-name").toLowerCase()
-                members = card.getAttribute("data-members").split(', ').map(member => member.trim())
-                locations = card.getAttribute("data-location").split(', ').map(location => location.trim())
+                members = card.getAttribute("data-members")
+                locations = card.getAttribute("data-location")
                 firstAlbum = card.getAttribute("data-firstAlbum").toLowerCase()
                 creationDate = card.getAttribute("data-creationDate").toLowerCase()
-                
+                // console.log(members)
                 if(name.includes(inputValue) || members.includes(inputValue) || locations.includes(inputValue) ||  firstAlbum.includes(inputValue) || creationDate.includes(inputValue)) {
-
-                    let divSuggestion =  document.createElement('div')
-                    let filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
-                    let filterLocations = locations.filter(location => location.includes(inputValue))
-                    let arrayVariable = [name,  filterMembers.join(', '), filterLocations.join(', '), firstAlbum, creationDate]
-                    arraySuggestion = arrayVariable.filter(item => item.includes(inputValue))  
+                    if (id.includes(inputValue)) {
+                        console.log(id)
+                    }
+                    if (name.includes(inputValue)) {
+                        // console.log(name)
+                        arraySuggestion.push(name)
+                    }
+                    if (firstAlbum.includes(inputValue)) {
+                        // console.log(firstAlbum)
+                        arraySuggestion.push(firstAlbum)
+                    }
+                    if (creationDate.includes(inputValue)) {
+                        // console.log(creationDate)
+                        arraySuggestion.push(creationDate)
+                    }
+                    if (members) {
+                            members = JSON.parse(members) // Convert to array
+                            filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
+                            // console.log(filterMembers)
+                            let strMembers = members.join(", ")
+                            arraySuggestion.push()
+                        }
+                    if (locations) {
+                        locatio = JSON.parse(locations)
+                        // console.log(locatio)
+                        filterLocations = locatio.filter(item => {  return item.toLowerCase().includes(inputValue) })
+                        console.log(filterLocations)
+                        if (filterLocations.length > 0 ) {
+                            let strLocations = filterLocations.join(", ")
+                            arraySuggestion.push(strLocations)
+                        }
+                    }
+                    
                     console.log(arraySuggestion)
+                    console.log(typeof(Number(id)), name, (members), (locations),  firstAlbum, creationDate)
+                    divSuggestion =  document.createElement('div')
+                    // let divSuggestion = document.createElement('div')
+                    
                     divSuggestion.innerHTML = arraySuggestion.join(' | ')
                     boxSuggestion.appendChild(divSuggestion)
+                    // filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
+                    // filterLocations = locations.filter(location => location.includes(inputValue))
+                    // arrayVariable = [name,  filterMembers.join(', '), filterLocations.join(', '), firstAlbum, creationDate]
+                    // console.log(arrayVariable)
+                    // arraySuggestion = arrayVariable.filter(item => item.includes(inputValue))  
+                    // console.log(arraySuggestion)
                     cardId.push(Number(id))
+                    console.log(cardId)
                 }
             })
-
+            
+            boxSuggestion.appendChild(divSuggestion)
+            console.log(arraySuggestion)
             cards.forEach(card => {
                 const id = Number(card.getAttribute("data-id"))
                 card.style.cssText = cardId.includes(id) ? `display: flex; flex-wrap:wrap`:  `display: none;`
@@ -112,7 +158,9 @@
                 div.innerHTML = ''
                 images.forEach(item => {
                     div.innerHTML += `
-                    <div class="card" data-id=${item.id} data-name=${item.name} data-members=${item.members} data-location=${item.Location}
+                    <div class="card" data-id=${item.id} data-name=${item.name} data-members='
+                    ${JSON.stringify(item.members).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}'
+                     data-location=${JSON.stringify(item.Location).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}
                     data-firstAlbum=${item.firstAlbum} data-creationDate=${item.creationDate}>
                         <img id=${item.id} src="${item.image}" alt="${item.name}">
                     </div>`
