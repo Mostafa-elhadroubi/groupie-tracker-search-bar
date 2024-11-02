@@ -27,50 +27,60 @@
         div.style.cssText = `display: flex; flex-wrap: wrap;`
         // div.style.cssText = input.value == "" ? `display:block` :  `display:none`
         // let arraySuggestion = []
+        let boxSuggestion = document.createElement('div')
+        let divSuggestion = document.createElement('div')
+        divSuggestion.className = "suggestions"
+        let suggestions = document.querySelector('.suggestions')
+        divSuggestion.style.cssText = `border:2px solid rgb(110, 108, 108) ;  border-radius: 5px; padding: 8px; width: 300px; max-height:  60px; overflow-y: scroll;
+        font-size: 18px; transition: box-shadow 0.3s ease;`
+        const style = document.createElement('style');
+style.innerHTML = `
+    .suggestions::-webkit-scrollbar {
+        width: 8px;
+    }
+    .suggestions::-webkit-scrollbar-thumb {
+        background-color: darkgrey; /* Color of the scrollbar thumb */
+        border-radius: 10px; /* Rounded corners */
+    }
+    .suggestions::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Background of the scrollbar track */
+    }
+`;
+document.head.appendChild(style);
+
+        boxSuggestion.style.cssText = `display: flex; flex-direction: column; align-items: center;`
         input.addEventListener('keyup', () => {
             
-            const existingSuggestions = document.querySelector('.suggestions')
-            if (existingSuggestions){
-                existingSuggestions.remove()
-            }
-            let boxSuggestion = document.createElement('div');
-            boxSuggestion.className = "suggestions"; // Set class name
+            // const existingSuggestions = document.querySelector('.suggestions')
+            // if (existingSuggestions){
+            //     existingSuggestions.remove()
+            // }
+            // boxSuggestion.className = "suggestions"; // Set class name
             if (input.value.length > 0) {
-                // console.log(input.value)
                 let arraySuggestion = []
                 GetContent()
 
             } else {
-                // if (existingSuggestions) {
-                //     GetImages()
-                // existingSuggestions.style.display = 'none'; // Hide suggestions
-                // }
                 cards.forEach(card => {
                     card.style.display = 'flex'; // Show all cards
                 })
             }
-            searchBar.insertAdjacentElement('afterend', boxSuggestion);
-            // existingSuggestions.style.cssText =  inputValue == ""  ?  `display:none` : `display:block`
-            // div.style.cssText = input.value == "" ? `display:flex; flex-wrap:wrap` :  `display:none`
+            // searchBar.insertAdjacentElement('afterend', boxSuggestion);
         })
         GetImages()
         let inputValue, id, name, members, locations, firstAlbum, creationDate
         function GetContent() {
-            let divSuggestion = document.createElement('div')
-            divSuggestion.innerHTML = ''
             let locations = []
             let cardId = []
             inputValue = (input.value).toLowerCase()
             let cards = document.querySelectorAll('.card')
-            // let matchedContainer = document.createElement('div')
-            // matchedContainer.style.cssText = `display: flex; flex-wrap: wrap;`
-            let boxSuggestion = document.createElement('div')
-            let  arraySuggestion = []
-            let filterMembers, filterLocations, arrayVariable = []
-             boxSuggestion.innerHTML = ''
-             divSuggestion.innerHTML = ""
+            
+            boxSuggestion.innerHTML = ''
+            divSuggestion.innerHTML = ''
             cards.forEach(card => {
                 id, name, members, locations, firstAlbum, creationDate = ""
+                let  arraySuggestion = []
+                let filterMembers, filterLocations, arrayVariable = []
                 
                 id = card.getAttribute("data-id")
                 name = card.getAttribute("data-name").toLowerCase()
@@ -78,33 +88,31 @@
                 locations = card.getAttribute("data-location")
                 firstAlbum = card.getAttribute("data-firstAlbum").toLowerCase()
                 creationDate = card.getAttribute("data-creationDate").toLowerCase()
-                // console.log(members)
+
                 if(name.includes(inputValue) || members.includes(inputValue) || locations.includes(inputValue) ||  firstAlbum.includes(inputValue) || creationDate.includes(inputValue)) {
                     if (id.includes(inputValue)) {
                         console.log(id)
                     }
                     if (name.includes(inputValue)) {
-                        // console.log(name)
+
                         arraySuggestion.push(name)
                     }
                     if (firstAlbum.includes(inputValue)) {
-                        // console.log(firstAlbum)
+
                         arraySuggestion.push(firstAlbum)
                     }
                     if (creationDate.includes(inputValue)) {
-                        // console.log(creationDate)
+
                         arraySuggestion.push(creationDate)
                     }
                     if (members) {
                             members = JSON.parse(members) // Convert to array
                             filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
-                            // console.log(filterMembers)
                             let strMembers = members.join(", ")
                             arraySuggestion.push()
                         }
                     if (locations) {
                         locatio = JSON.parse(locations)
-                        // console.log(locatio)
                         filterLocations = locatio.filter(item => {  return item.toLowerCase().includes(inputValue) })
                         console.log(filterLocations)
                         if (filterLocations.length > 0 ) {
@@ -115,36 +123,23 @@
                     
                     console.log(arraySuggestion)
                     console.log(typeof(Number(id)), name, (members), (locations),  firstAlbum, creationDate)
-                    divSuggestion =  document.createElement('div')
-                    // let divSuggestion = document.createElement('div')
-                    
-                    divSuggestion.innerHTML = arraySuggestion.join(' | ')
-                    boxSuggestion.appendChild(divSuggestion)
-                    // filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
-                    // filterLocations = locations.filter(location => location.includes(inputValue))
-                    // arrayVariable = [name,  filterMembers.join(', '), filterLocations.join(', '), firstAlbum, creationDate]
-                    // console.log(arrayVariable)
-                    // arraySuggestion = arrayVariable.filter(item => item.includes(inputValue))  
-                    // console.log(arraySuggestion)
+                    if  (arraySuggestion.length > 0) {
+                    divSuggestion.innerHTML += `
+                    <div>${arraySuggestion.join(' | ')}</div>`
                     cardId.push(Number(id))
                     console.log(cardId)
+                    }
                 }
             })
-            
-            boxSuggestion.appendChild(divSuggestion)
-            console.log(arraySuggestion)
             cards.forEach(card => {
                 const id = Number(card.getAttribute("data-id"))
                 card.style.cssText = cardId.includes(id) ? `display: flex; flex-wrap:wrap`:  `display: none;`
             })
-            // 
-            if(boxSuggestion.childNodes.length > 0) {
+            console.log(boxSuggestion)
+            boxSuggestion.appendChild(divSuggestion)
+            if(boxSuggestion.children.length > 0) {
                 searchBar.insertAdjacentElement('afterend', boxSuggestion)
             }
-            // if(existingSuggestions) {
-            //     existingSuggestions.remove()
-            // }
-
         }
         function GetImages() {
         let xhr = new XMLHttpRequest()
