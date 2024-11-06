@@ -72,9 +72,10 @@ document.head.appendChild(style);
         function GetContent() {
             let locations = []
             let cardId = []
-            inputValue = (input.value).toLowerCase()
+            inputValue = (input.value).toLowerCase().trim()
+            console.log(inputValue)
             let cards = document.querySelectorAll('.card')
-            
+            console.log(inputValue)
             boxSuggestion.innerHTML = ''
             divSuggestion.innerHTML = ''
             cards.forEach(card => {
@@ -84,18 +85,18 @@ document.head.appendChild(style);
                 
                 id = card.getAttribute("data-id")
                 name = card.getAttribute("data-name").toLowerCase()
-                members = card.getAttribute("data-members")
-                locations = card.getAttribute("data-location")
+                OriginMembers = card.getAttribute("data-members")
+                members = card.getAttribute("data-members").toLowerCase()
+                OriginLocations = card.getAttribute("data-location")
+                locations = card.getAttribute("data-location").toLowerCase()
                 firstAlbum = card.getAttribute("data-firstAlbum").toLowerCase()
                 creationDate = card.getAttribute("data-creationDate").toLowerCase()
-
+                console.log(members, typeof(members))
+                console.log(name, members, locations,  firstAlbum, creationDate)
                 if(name.includes(inputValue) || members.includes(inputValue) || locations.includes(inputValue) ||  firstAlbum.includes(inputValue) || creationDate.includes(inputValue)) {
-                    if (id.includes(inputValue)) {
-                        console.log(id)
-                    }
                     if (name.includes(inputValue)) {
-
-                        arraySuggestion.push(name)
+                        nam = JSON.parse(name)
+                        arraySuggestion.push(nam)
                     }
                     if (firstAlbum.includes(inputValue)) {
 
@@ -105,27 +106,39 @@ document.head.appendChild(style);
 
                         arraySuggestion.push(creationDate)
                     }
-                    if (members) {
-                            members = JSON.parse(members) // Convert to array
-                            filterMembers = members.filter(member => member.toLowerCase().includes(inputValue))
-                            let strMembers = members.join(", ")
-                            arraySuggestion.push()
-                        }
-                    if (locations) {
-                        locatio = JSON.parse(locations)
+                    // if (members) {
+                            memb = JSON.parse(OriginMembers) // Convert to array
+                            console.log('######')
+                            console.log(memb)
+                            console.log('######')
+                            filterMembers = memb.filter(member => {return member.toLowerCase().includes(inputValue)})
+                            console.log('888888888888888')
+                            console.log(filterMembers)
+                            console.log('888888888888888')
+                            if (filterMembers[0] != "") {
+                            let strMembers = filterMembers.join(", ")
+                            arraySuggestion.push(strMembers)
+                            console.log('push')
+                            console.log(arraySuggestion)
+                            console.log('push')
+                            }
+                        // }
+                    // if (locations) {
+                        locatio = JSON.parse(OriginLocations)
                         filterLocations = locatio.filter(item => {  return item.toLowerCase().includes(inputValue) })
                         console.log(filterLocations)
-                        if (filterLocations.length > 0 ) {
+                        if (filterLocations.length > 0) {
                             let strLocations = filterLocations.join(", ")
                             arraySuggestion.push(strLocations)
                         }
-                    }
-                    
+                    // }
+                    console.log('sug')
                     console.log(arraySuggestion)
-                    console.log(typeof(Number(id)), name, (members), (locations),  firstAlbum, creationDate)
+                    console.log('sug')
+                    // console.log(typeof(Number(id)), name, (members), (locations),  firstAlbum, creationDate)
                     if  (arraySuggestion.length > 0) {
                     divSuggestion.innerHTML += `
-                    <div>${arraySuggestion.join(' | ')}</div>`
+                    <div>${arraySuggestion.join(' ')}</div>`
                     cardId.push(Number(id))
                     console.log(cardId)
                     }
@@ -135,7 +148,7 @@ document.head.appendChild(style);
                 const id = Number(card.getAttribute("data-id"))
                 card.style.cssText = cardId.includes(id) ? `display: flex; flex-wrap:wrap`:  `display: none;`
             })
-            console.log(boxSuggestion)
+            console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
             boxSuggestion.appendChild(divSuggestion)
             if(boxSuggestion.children.length > 0) {
                 searchBar.insertAdjacentElement('afterend', boxSuggestion)
@@ -153,7 +166,7 @@ document.head.appendChild(style);
                 div.innerHTML = ''
                 images.forEach(item => {
                     div.innerHTML += `
-                    <div class="card" data-id=${item.id} data-name=${item.name} data-members='
+                    <div class="card" data-id=${item.id} data-name=${JSON.stringify(item.name).replace(/'/g, "&apos;")} data-members='
                     ${JSON.stringify(item.members).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}'
                      data-location=${JSON.stringify(item.Location).replace(/'/g, "&apos;").replace(/"/g, "&quot;")}
                     data-firstAlbum=${item.firstAlbum} data-creationDate=${item.creationDate}>
