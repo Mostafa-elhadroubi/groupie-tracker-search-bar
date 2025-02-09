@@ -14,26 +14,53 @@ import (
 func Artists(w http.ResponseWriter, r *http.Request) {
 	tmp, err := template.ParseFiles("./html/artists.html")
 	if err != nil {
-		http.Error(w, "Not FOund", http.StatusNotFound)
+		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
 	response, err := http.Get(artistAPI)
 	if err != nil {
-		http.Error(w, "Not Found", http.StatusInternalServerError)
+		http.Error(w, "Failed to fetch artist data", http.StatusInternalServerError)
 		return
 	}
 	content, err := io.ReadAll(response.Body)
 	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
+		http.Error(w, "Failed to read response", http.StatusInternalServerError)
 		return
 	}
 	defer response.Body.Close()
 	if err := json.Unmarshal(content, &artist); err != nil {
-		fmt.Println(err.Error())
+		http.Error(w, "Failed to unmarshal JSON", http.StatusInternalServerError)
 		return
 	}
-	tmp.Execute(w, artist)
+	if err := tmp.Execute(w, artist); err != nil {
+		http.Error(w, "Failed to execute template", http.StatusInternalServerError)
+	}
 }
+// Add this function to your `functions` package
+func GetArtistsData(w http.ResponseWriter, r *http.Request) {
+    response, err := http.Get(artistAPI)
+    if err != nil {
+        http.Error(w, "Failed to fetch artist data", http.StatusInternalServerError)
+        return
+    }
+    content, err := io.ReadAll(response.Body)
+    if err != nil {
+        http.Error(w, "Failed to read response", http.StatusInternalServerError)
+        return
+    }
+    defer response.Body.Close()
+
+    if err := json.Unmarshal(content, &artist); err != nil {
+        http.Error(w, "Failed to unmarshal JSON", http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    if err := json.NewEncoder(w).Encode(artist); err != nil {
+        http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
+    }
+}
+
 
 func ArtistDetails(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
@@ -101,13 +128,13 @@ func GetContent(w http.ResponseWriter, API string, strId string) []byte {
 	response, err := http.Get(API+strId)
 		if err != nil {
 			fmt.Println("errr66666666")
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			http.Error(w, "Failed to fetch artist data", http.StatusInternalServerError)
 			panic(0)
 		}
 		content, err := io.ReadAll(response.Body)
 		if err != nil {
 			fmt.Println("err7777777777")
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			http.Error(w, "Failed to read artist data", http.StatusInternalServerError)
 			panic(0)
 		}
 		return content

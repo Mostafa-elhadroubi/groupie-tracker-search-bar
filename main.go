@@ -8,6 +8,8 @@ import (
 
 func main() {
 	http.HandleFunc("/", functions.Artists)
+	http.HandleFunc("/api/artists", functions.GetArtistsData)
+
 	http.HandleFunc("/artist/", functions.ArtistDetails)
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
