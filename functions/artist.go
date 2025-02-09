@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"text/template"
 )
 
@@ -54,7 +55,34 @@ func GetArtistsData(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Failed to unmarshal JSON", http.StatusInternalServerError)
         return
     }
+	var wg sync.WaitGroup
+	wg.Add(len(artist)) // Add the number of artists to the WaitGroup
 
+	// Use a mutex to safely update the artist slice concurrently
+	var mu sync.Mutex
+
+	// Fetch location data for each artist concurrently
+	for i := 0; i < len(artist); i++ {
+		go func(i int) {
+			defer wg.Done() // Mark the goroutine as done when it finishes
+
+			// Fetch location data
+			contentLocation := GetContent(w, locationAPI, strconv.Itoa(i+1))
+			// var location Location
+			if err := json.Unmarshal(contentLocation, &location); err != nil {
+				fmt.Println("Error unmarshaling location data:", err)
+				return
+			}
+
+			// Safely update the artist slice
+			mu.Lock()
+			artist[i].LocationsData = location
+			mu.Unlock()
+		}(i)
+	}
+
+	// Wait for all goroutines to finish
+	wg.Wait()
     w.Header().Set("Content-Type", "application/json")
     if err := json.NewEncoder(w).Encode(artist); err != nil {
         http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
@@ -112,11 +140,8 @@ func ArtistDetails(w http.ResponseWriter, r *http.Request) {
 	artist[id-1].Locations = strings.Join(location.Locations, " ")
 	artist[id-1].ConcertDates = strings.Join(date.Dates, " ")
 	artist[id-1].RelationsMap = relation.Relations
-	// artistId = id
 
-	
 	err = tmp.Execute(w, artist[id-1])
-
 	if err != nil {
         fmt.Println("Error executing template:", err)
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)

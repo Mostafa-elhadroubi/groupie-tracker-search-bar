@@ -14,17 +14,20 @@ cards.forEach(card => {
 const fetchData = async() => {
     const response = await fetch('/api/artists')
     const a = await response.json()
-    console.log(a)
+    // console.log(a)
+    return a
 }
-fetchData()
+console.log(fetchData())
 
-// input.addEventListener('input', () => {
-//     const inputValue = input.value.toLowerCase()
-//     artistName.forEach(Name => {
-
-//         if(Name.textContent.toLocaleLowerCase().trim().includes(inputValue)){
+input.addEventListener('input', () => {
+    const inputValue = input.value.toLowerCase()
+    const dataArtist = fetchData()
     
-//             console.log(Name.textContent) 
-//         }
-//     })
-// })
+    artistName.forEach(Name => {
+
+        if(Name.textContent.toLocaleLowerCase().trim().includes(inputValue)){
+    
+            console.log(Name.textContent) 
+        }
+    })
+})
