@@ -26,6 +26,22 @@ h1{
     background: rgb(97, 95, 95);
     padding: 20px 0;
     text-align: center;
+    /* background: green; */
+}
+.boxSuggestion {
+    background: red;
+    /* text-align: center; */
+    display: flex;
+    flex-direction: column;
+    /* flex-wrap: wrap; */
+    align-items: center;
+    max-height: 300px;
+}
+.boxSuggestion .suggestion {
+    width: 50%;
+    padding: 5px;
+    border: 2px solid blue;
+    background: orange;
 }
 /* .searchBar input{
     padding: 15px;
