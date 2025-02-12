@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
 *{
     padding: 0;
     margin: 0;
@@ -22,7 +24,7 @@ h1{
     /* margin-top: 60px; */
 }
 .search-suggestion {
-    background: green;
+    /* background: green; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -37,8 +39,7 @@ h1{
     /* background: green; */
 }
 .boxSuggestion {
-    background: red;
-    /* text-align: center; */
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -50,23 +51,49 @@ h1{
 .boxSuggestion .suggestion {
     width: 100%;
     padding: 5px;
-    border: 2px solid blue;
-    background: orange;
-    /* z-index: 12; */
+    /* border: 2px solid rgb(255, 255, 255); */
+    font-size: 22px;
+    font-family: 'Roboto Mono', serif;
+    text-align: center;
 }
-/* .searchBar input{
-    padding: 15px;
+
+.boxSuggestion .suggestion:nth-child(even) {
+    background: rgb(255, 255, 255);
+}
+.boxSuggestion .suggestion:nth-child(odd) {
+    background: black;
+    color: whitesmoke;
+}
+/* Style the entire scrollbar */
+.boxSuggestion::-webkit-scrollbar {
+    width: 12px; /* For vertical scrollbar */
+    height: 12px; /* For horizontal scrollbar */
+    background: white;
     border-radius: 10px;
-    width: 400px;
-    border: none;
-    outline: none;
-    font-size: 20px;
-} */
+}
+
+/* Style the scrollbar track (the background of the scrollbar) */
+.boxSuggestion::-webkit-scrollbar-track {
+    background-color: white; /* Light gray track */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* Style the scrollbar thumb (the draggable part of the scrollbar) */
+.boxSuggestion::-webkit-scrollbar-thumb {
+    background-color: black; /* Darker gray thumb */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* Style the scrollbar thumb on hover */
+.boxSuggestion::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
 
 .searchBar input {
     width: 100%;
     padding: 12px 16px;
-    font-size: 16px;
+    font-size: 20px;
     border: 2px solid #ccc;
     border-radius: 8px;
     outline: none;
@@ -115,6 +142,7 @@ h1{
     background: rgb(97, 95, 95);
     border-radius: 0 0 10px 10px;
     color: white;
+    font-family: 'Roboto Mono', serif;
     
 }
 .artistCard:hover  {

@@ -1,79 +1,81 @@
-const cards = document.querySelectorAll('.artistCard')
-const input = document.getElementById('search')
-const boxSuggestion = document.querySelector('.boxSuggestion')
-const artistParent = document.querySelector('.artist')
-let boxArr = []
+const cards = document.querySelectorAll('.artistCard');
+const input = document.getElementById('search');
+const boxSuggestion = document.querySelector('.boxSuggestion');
+const artistParent = document.querySelector('.artist');
+let boxArr = [];
+let dataArtist = [];
 
 const HandleCardClick = (card) => {
-    const artistId = card.getAttribute("id")
-    window.location.href = `/artist/${artistId}`
-}
+    const artistId = card.getAttribute("id");
+    window.location.href = `/artist/${artistId}`;
+};
 
 const cardClickEvent = () => {
-    const allCards = document.querySelectorAll('.artistCard')
+    const allCards = document.querySelectorAll('.artistCard');
     allCards.forEach(card => {
-        card.addEventListener('click', () => HandleCardClick(card))
-    })
-}
-cardClickEvent()
+        card.addEventListener('click', () => HandleCardClick(card));
+    });
+};
+
 const fetchData = async() => {
-    const response = await fetch('/api/artists')
-    const resp = await response.json()
-// console.log(resp)
-    return resp
-}
-fetchData()
+    const response = await fetch('/api/artists');
+    const resp = await response.json();
+    dataArtist = resp;
+};
 
+const initializeData = async () => {
+    await fetchData();
+    cardClickEvent();
+};
 
-input.addEventListener('input', async() => {
-    const inputValue = input.value.toLowerCase()
-    const dataArtist = await fetchData()
-    artistParent.innerHTML = ''  // Clear previous results
-    boxSuggestion.innerHTML = ''
-    boxArr = []
+initializeData();
+
+input.addEventListener('input', () => {
+    const inputValue = input.value.toLowerCase();
+    artistParent.innerHTML = '';  
+    boxSuggestion.innerHTML = '';
+    boxArr = []; 
+
+    // Loop through dataArtist and filter by the input value
     dataArtist.forEach(obj => {
         const Name = obj.name.toLowerCase().includes(inputValue);
         const location = obj.Locations.toLowerCase();
         const date = obj.creationDate.toString().includes(inputValue);
         const firstAlbum = obj.firstAlbum.toLowerCase().includes(inputValue);
         const membersMatch = obj.members.some(member => member.toLowerCase().includes(inputValue));
-        console.log(boxArr, "before")
-        if(Name) {
-            if(!boxArr.some(item => item.toLowerCase().includes(obj.name))) {
-                boxArr.push(obj.name)
-            }
+
+        // Check if the artist's name matches the input
+        if (Name && !boxArr.some(item => item.toLowerCase().includes(obj.name.toLowerCase()))) {
+            boxArr.push(obj.name);
         }
-        const locationArr = obj.Locations.split(' ')
-        locationArr.forEach(location => {
-            if (location.toLowerCase().includes(inputValue)) {
-                if(!boxArr.some(item =>  item.toLowerCase().includes(location))) {
-                    boxArr.push(location)
-                }
+
+        // Check locations
+        const locationArr = obj.Locations.split(' ');
+        locationArr.forEach(loc => {
+            if (loc.toLowerCase().includes(inputValue) && !boxArr.some(item => item.toLowerCase().includes(loc.toLowerCase()))) {
+                boxArr.push(loc);
             }
-        })
-        if(date) {
-            console.log(boxArr)
-            if(!boxArr.some(item => item.toLowerCase().includes(obj.date.toString()))) {
-                boxArr.push(obj.date.toString())
-            }
+        });
+
+        // Check creation date
+        if (date && !boxArr.some(item => item.toLowerCase().includes(String(obj.creationDate)))) {
+            boxArr.push(String(obj.creationDate));
         }
-        if(firstAlbum) {
-            if(!boxArr.some(item => item.toLowerCase().includes(obj.firstAlbum))) {
-                boxArr.push(obj.firstAlbum)
-            }
-          
+
+        // Check first album
+        if (firstAlbum && !boxArr.some(item => item.toLowerCase().includes(obj.firstAlbum.toLowerCase()))) {
+            boxArr.push(obj.firstAlbum);
         }
-        const membersArr = obj.members
-        membersArr.forEach(member => {
-            if(member.toLowerCase().includes(inputValue)) {
-                if(!boxArr.some(item => item.toLowerCase().includes(member))) {
-                    boxArr.push(member)
-                }
+
+        // Check members
+        obj.members.forEach(member => {
+            if (member.toLowerCase().includes(inputValue) && !boxArr.some(item => item.toLowerCase().includes(member.toLowerCase()))) {
+                boxArr.push(member);
             }
-        })
-        // Check if any of the conditions match
+        });
+
+        // If any condition matches, create the artist card
         if (Name || location.includes(inputValue) || date || firstAlbum || membersMatch) {
-            // If it matches, create the artist card and add it to the parent element
             artistParent.innerHTML += `
                 <div class="artistCard" id="${obj.id}">
                     <img src="${obj.image}" alt="${obj.image}" loading="lazy">
@@ -81,15 +83,21 @@ input.addEventListener('input', async() => {
                 </div>
             `;
         }
-        console.log(boxArr, "after")
     });
+
+    // If input is empty, reset the boxArr
+    if (inputValue.length === 0) {
+        boxArr = [];
+    }
+
+    // Render suggestions
+    if (boxArr.length > 0) {
+        boxArr.forEach(item => {
+            const suggestion = document.createElement('div');
+            suggestion.textContent = item;
+            suggestion.classList.add('suggestion');
+            boxSuggestion.appendChild(suggestion);
+        });
+    }
     cardClickEvent();
-    boxArr.forEach(item => {
-        const suggestion = document.createElement('div')
-        suggestion.textContent = `${item}`
-        suggestion.classList.add('suggestion')
-        boxSuggestion.appendChild(suggestion)
-    })
-
 });
-

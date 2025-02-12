@@ -76,13 +76,16 @@ func GetArtistsData(w http.ResponseWriter, r *http.Request) {
 
 			// Safely update the artist slice
 			mu.Lock()
-			if i < len(artist) { // Ensure the index is within bounds
-                if location.Locations != nil && len(location.Locations) >= 0 {
-                    artist[i].Locations = strings.Join(location.Locations, " ")
-                } else {
-                    artist[i].Locations = "" // Set empty string if Locations is nil or empty
-                }
-            }
+			if artist[i].Id == location.Id {
+				artist[i].Locations = strings.Join(location.Locations, " ")
+			}
+			// if i < len(artist) { // Ensure the index is within bounds
+            //     if location.Locations != nil && len(location.Locations) >= 0 {
+            //         artist[i].Locations = strings.Join(location.Locations, " ")
+            //     } else {
+            //         artist[i].Locations = "" // Set empty string if Locations is nil or empty
+            //     }
+            // }
 			mu.Unlock()
 		}(i)
 	}
