@@ -76,7 +76,7 @@ func GetArtistsData(w http.ResponseWriter, r *http.Request) {
 
 			// Safely update the artist slice
 			mu.Lock()
-			artist[i].LocationsData = location
+			artist[i].Locations = strings.Join(location.Locations, " ")
 			mu.Unlock()
 		}(i)
 	}

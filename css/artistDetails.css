@@ -41,6 +41,8 @@ body .header{
     border-radius: 50%;
     width: 300px;
     margin-bottom: 60px;
+    border: 2px solid white;
+    animation: rotateTwice 2s ease-in-out alternate;
     /* object-fit: cover; */
 }
 .container .artistInfo .info {
@@ -131,4 +133,16 @@ body .header{
     border: 2px solid black;
     color: black;
     background: rgb(243, 242, 242);
+}
+
+@keyframes rotateTwice {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(720deg);
+    }
+    100% {
+        transform: rotate(0deg); /* 2 full rotations */
+    }
 }
