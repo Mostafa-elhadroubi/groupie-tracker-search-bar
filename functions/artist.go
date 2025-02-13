@@ -79,13 +79,6 @@ func GetArtistsData(w http.ResponseWriter, r *http.Request) {
 			if artist[i].Id == location.Id {
 				artist[i].Locations = strings.Join(location.Locations, " ")
 			}
-			// if i < len(artist) { // Ensure the index is within bounds
-            //     if location.Locations != nil && len(location.Locations) >= 0 {
-            //         artist[i].Locations = strings.Join(location.Locations, " ")
-            //     } else {
-            //         artist[i].Locations = "" // Set empty string if Locations is nil or empty
-            //     }
-            // }
 			mu.Unlock()
 		}(i)
 	}
@@ -149,6 +142,7 @@ func ArtistDetails(w http.ResponseWriter, r *http.Request) {
 	artist[id-1].Locations = strings.Join(location.Locations, " ")
 	artist[id-1].ConcertDates = strings.Join(date.Dates, " ")
 	artist[id-1].RelationsMap = relation.Relations
+	artist[id-1].Relations = relation.Relations
 
 	err = tmp.Execute(w, artist[id-1])
 	if err != nil {

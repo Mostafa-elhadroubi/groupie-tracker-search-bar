@@ -18,7 +18,7 @@ type Artist struct {
 	FirstAlbum       string   `json:"firstAlbum"`
 	Locations        string
 	ConcertDates     string
-	Relations        string
+	Relations        any
 	RelationsMap     map[string][]string
 	LocationsData    Location
 }
