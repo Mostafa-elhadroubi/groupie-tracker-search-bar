@@ -1,7 +1,7 @@
 const locationDiv = document.querySelector('#location')
 const locationParent = document.querySelector('#locationParent')
-const locationElement = locationDiv.textContent.split(" ")
-
+const locationElement = locationDiv.textContent.replace(/[/[\]]/g,"").split(" ")
+console.log(locationElement)
 const dateDiv = document.querySelector('#date')
 const dateParent = document.querySelector('#dateParent')
 const dateElement = dateDiv.textContent.split(' ')

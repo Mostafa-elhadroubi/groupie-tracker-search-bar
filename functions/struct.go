@@ -16,11 +16,9 @@ type Artist struct {
 	Members          []string `json:"members"`
 	CreationDate     int      `json:"creationDate"`
 	FirstAlbum       string   `json:"firstAlbum"`
-	Locations        string
+	Locations       any
 	ConcertDates     string
 	Relations        any
-	RelationsMap     map[string][]string
-	LocationsData    Location
 }
 
 var location Location
@@ -42,4 +40,8 @@ var relation Relation
 type Relation struct {
 	Id        int                 `json:"id"`
 	Relations map[string][]string `json:"datesLocations"`
+}
+
+type Error struct {
+	Message string
 }

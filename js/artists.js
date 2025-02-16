@@ -18,7 +18,7 @@ const cardClickEvent = () => {
 };
 
 const fetchData = async() => {
-    const response = await fetch('/api/artists');
+    const response = await fetch('/api/artists/');
     const resp = await response.json();
     dataArtist = resp;
 };
